@@ -33,6 +33,7 @@ import { TripService } from "../services/trip-service";
 import { PickUpPage } from "../pages/pick-up/pick-up";
 import { DropOffPage } from "../pages/drop-off/drop-off";
 import { LoginHomePage } from "../pages/login-home/login-home";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
   templateUrl: "app.html",
@@ -92,7 +93,8 @@ export class MyApp {
     driverService: DriverService,
     afAuth: AngularFireAuth,
     public authService: AuthService,
-    tripService: TripService
+    tripService: TripService,
+    private _sanitizer: DomSanitizer
   ) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
@@ -103,7 +105,7 @@ export class MyApp {
       // check for login stage, then redirect
       afAuth.authState.take(1).subscribe(authData => {
         if (authData) {
-          let root: any = LoginHomePage;
+          let root: any = HomePage;
 
           // check for uncompleted trip
           tripService
@@ -221,7 +223,12 @@ export class MyApp {
    */
   logout() {
     this.authService.logout().then(() => {
-      this.nav.setRoot(LoginPage);
+      this.nav.setRoot(LoginHomePage);
     });
+  }
+
+  getBackground(image) {
+    //console.log(`url(${image})`)
+    return this._sanitizer.bypassSecurityTrustStyle(`url(${image})`);
   }
 }

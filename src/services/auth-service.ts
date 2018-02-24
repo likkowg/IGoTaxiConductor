@@ -100,8 +100,13 @@ export class AuthService {
       email: user.email,
       phoneNumber: user.phoneNumber ? user.phoneNumber : '',
       plate: user.plate ? user.plate : '',
+      plastname: user.plastname ? user.plastname : '',
+      mlastname: user.mlastname ? user.mlastname : '',
       brand: user.brand ? user.brand : '',
       type: user.type ? user.type : '',
+      dni: user.dni ? user.dni : '',
+      model: user.model ? user.model : '',
+      vehiclePhotoURL: user.vehiclePhotoURL ? user.vehiclePhotoURL : ''
     })
   }
 

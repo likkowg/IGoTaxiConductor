@@ -56,6 +56,9 @@ export const firebaseConfig = {
   messagingSenderId: "84785757637"
 };
 
+
+import { AgmCoreModule } from '@agm/core';
+
 @NgModule({
   declarations: [
     MyApp,
@@ -83,7 +86,10 @@ export const firebaseConfig = {
     AngularFireDatabaseModule,
     AngularFireAuthModule,
     MomentModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    AgmCoreModule.forRoot({
+      apiKey: 'AIzaSyB0DSsFYLN9j9hrogzv-FCT_N0TLX9hx-A'
+    })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
