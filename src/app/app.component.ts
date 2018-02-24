@@ -1,16 +1,20 @@
-import { Component } from '@angular/core';
-import { Platform } from 'ionic-angular';
-import { ViewChild } from '@angular/core';
-import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
-import { Geolocation } from '@ionic-native/geolocation';
+import { Component } from "@angular/core";
+import { Platform } from "ionic-angular";
+import { ViewChild } from "@angular/core";
+import { StatusBar } from "@ionic-native/status-bar";
+import { SplashScreen } from "@ionic-native/splash-screen";
+import { Geolocation } from "@ionic-native/geolocation";
 declare var google: any;
 
 // angularfire2
 import { AngularFireAuth } from "angularfire2/auth/auth";
 
 // constant
-import { POSITION_INTERVAL, TRIP_STATUS_WAITING, TRIP_STATUS_GOING } from "../services/constants";
+import {
+  POSITION_INTERVAL,
+  TRIP_STATUS_WAITING,
+  TRIP_STATUS_GOING
+} from "../services/constants";
 
 // import service
 import { AuthService } from "../services/auth-service";
@@ -18,68 +22,78 @@ import { PlaceService } from "../services/place-service";
 import { DriverService } from "../services/driver-service";
 
 // import page
-import { HomePage } from '../pages/home/home';
-import { WalletPage } from '../pages/wallet/wallet';
-import { JobHistoryPage } from '../pages/job-history/job-history';
-import { SettingPage } from '../pages/setting/setting';
-import { SupportPage } from '../pages/support/support';
-import { LoginPage } from '../pages/login/login';
+import { HomePage } from "../pages/home/home";
+import { WalletPage } from "../pages/wallet/wallet";
+import { JobHistoryPage } from "../pages/job-history/job-history";
+import { SettingPage } from "../pages/setting/setting";
+import { SupportPage } from "../pages/support/support";
+import { LoginPage } from "../pages/login/login";
 import { UserPage } from "../pages/user/user";
 import { TripService } from "../services/trip-service";
 import { PickUpPage } from "../pages/pick-up/pick-up";
 import { DropOffPage } from "../pages/drop-off/drop-off";
+import { LoginHomePage } from "../pages/login-home/login-home";
 
 @Component({
-  templateUrl: 'app.html',
+  templateUrl: "app.html",
   queries: {
-    nav: new ViewChild('content')
+    nav: new ViewChild("content")
   }
 })
-
 export class MyApp {
+  apellido: any;
+  name: any;
+  originalCoords: any;
   rootPage: any;
   nav: any;
   positionTracking: any;
   driver: any;
   user: any = {};
-  deb: string;
+  notificationAlreadyReceived = true;
   pages = [
     {
-      title: 'Home',
-      icon: 'ios-home-outline',
+      title: "Home",
+      icon: "ios-home-outline",
       count: 0,
       component: HomePage
     },
-    {
+    /*{
       title: 'Wallet',
       icon: 'ios-albums',
       count: 0,
       component: WalletPage
-    },
+    },*/
     {
-      title: 'Job history',
-      icon: 'md-time',
+      title: "Historial",
+      icon: "md-time",
       count: 0,
       component: JobHistoryPage
     },
-    {
-      title: 'Setting',
+    /*     {
+      title: 'Configuración',
       icon: 'settings',
       count: 0,
-      component: SettingPage
-    },
+      component: SettingsPage
+    }, */
     {
-      title: 'Support',
-      icon: 'ios-help-circle-outline',
+      title: "Reportar Fallas",
+      icon: "ios-help-circle-outline",
       count: 0,
       component: SupportPage
-    },
+    }
   ];
 
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, placeService: PlaceService,
-              geolocation: Geolocation, driverService: DriverService, afAuth: AngularFireAuth,
-              public authService: AuthService, tripService: TripService) {
-
+  constructor(
+    platform: Platform,
+    statusBar: StatusBar,
+    splashScreen: SplashScreen,
+    placeService: PlaceService,
+    geolocation: Geolocation,
+    driverService: DriverService,
+    afAuth: AngularFireAuth,
+    public authService: AuthService,
+    tripService: TripService
+  ) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -89,25 +103,28 @@ export class MyApp {
       // check for login stage, then redirect
       afAuth.authState.take(1).subscribe(authData => {
         if (authData) {
-          let root: any = HomePage;
+          let root: any = LoginHomePage;
 
           // check for uncompleted trip
-          tripService.getTrips().take(1).subscribe(trips => {
-            trips.forEach(trip => {
-              if (trip.status == TRIP_STATUS_WAITING) {
-                tripService.setCurrentTrip(trip.$key);
-                root = PickUpPage;
-              } else if (trip.status == TRIP_STATUS_GOING) {
-                tripService.setCurrentTrip(trip.$key);
-                root = DropOffPage;
-              }
-            });
+          tripService
+            .getTrips()
+            .take(1)
+            .subscribe(trips => {
+              trips.forEach(trip => {
+                if (trip.status == TRIP_STATUS_WAITING) {
+                  tripService.setCurrentTrip(trip.$key);
+                  root = PickUpPage;
+                } else if (trip.status == TRIP_STATUS_GOING) {
+                  tripService.setCurrentTrip(trip.$key);
+                  root = DropOffPage;
+                }
+              });
 
-            // if all trip are completed, go to home page
-            this.nav.setRoot(root);
-          });
+              // if all trip are completed, go to home page
+              this.nav.setRoot(root);
+            });
         } else {
-          this.nav.setRoot(LoginPage);
+          this.nav.setRoot(LoginHomePage);
         }
       });
 
@@ -128,39 +145,55 @@ export class MyApp {
       });
 
       // get current location
-      geolocation.getCurrentPosition().then((resp) => {
-        let latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
-        let geocoder = new google.maps.Geocoder();
+      geolocation.getCurrentPosition().then(
+        resp => {
+          let latLng = new google.maps.LatLng(
+            resp.coords.latitude,
+            resp.coords.longitude
+          );
+          let geocoder = new google.maps.Geocoder();
 
-        // debug
-        // this.deb = resp.coords.latitude + ',' + resp.coords.longitude;
+          // debug
+          // this.deb = resp.coords.latitude + ',' + resp.coords.longitude;
 
-        // find address from lat lng
-        geocoder.geocode({'latLng': latLng}, (results, status) => {
-          if (status == google.maps.GeocoderStatus.OK) {
-            // save locality
-            let locality = placeService.setLocalityFromGeocoder(results);
-            console.log('locality', locality);
+          // find address from lat lng
+          geocoder.geocode({ latLng: latLng }, (results, status) => {
+            if (status == google.maps.GeocoderStatus.OK) {
+              // save locality
+              let locality = placeService.setLocalityFromGeocoder(results);
+              console.log("locality", locality);
 
-            // start tracking
-            this.positionTracking = setInterval(() => {
-              // check for driver object, if it did not complete profile, stop updating location
-              if (!this.driver || !this.driver.type) {
-                return;
-              }
+              // start tracking
+              this.positionTracking = setInterval(() => {
+                // check for driver object, if it did not complete profile, stop updating location
+                if (!this.driver || !this.driver.type) {
+                  return;
+                }
 
-              geolocation.getCurrentPosition().then((resp) => {
-                driverService.updatePosition(this.driver.$key, this.driver.type, locality, resp.coords.latitude,
-                    resp.coords.longitude, this.driver.rating, this.driver.name);
-              }, err => {
-                console.log(err);
-              });
-            }, POSITION_INTERVAL);
-          }
-        });
-      }, err => {
-        console.log(err);
-      });
+                geolocation.getCurrentPosition().then(
+                  resp => {
+                    driverService.updatePosition(
+                      this.driver.$key,
+                      this.driver.type,
+                      locality,
+                      resp.coords.latitude,
+                      resp.coords.longitude,
+                      this.driver.rating,
+                      this.driver.name
+                    );
+                  },
+                  err => {
+                    console.log(err);
+                  }
+                );
+              }, POSITION_INTERVAL);
+            }
+          });
+        },
+        err => {
+          console.log(err);
+        }
+      );
     });
   }
 
@@ -192,4 +225,3 @@ export class MyApp {
     });
   }
 }
-

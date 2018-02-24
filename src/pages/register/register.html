@@ -1,68 +1,64 @@
 <!--
-  Generated template for the RegisterPage page.
+  Generated template for the SignInPage page.
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
+<ion-header no-border>
+  <ion-navbar transparent class="custom-nav-bar" color="gplus">
+  </ion-navbar>
+</ion-header>
 
-<ion-content class=" auth-bg">
-  <div class="auth-content">
 
-    <div class="light-bg">
+<ion-content>
 
-      <!-- Logo -->
-      <div padding text-center>
-        <div class="logo secondary-bg">
-          <ion-icon name="ios-car" color="light"></ion-icon>
-        </div>
-        <h2 ion-text color="dark">
-          Firetaxi driver
-        </h2>
-        <p ion-text color="dark">Firebase taxi driver app</p>
-      </div>
+  <!--   <div text-center class="buttons">
+    <p> Registrate con tus redes sociales</p>
+    <button ion-button icon-center style="width:45%" large color="fb-color" (click)="loginWithFacebook()">
+      <ion-icon name="logo-facebook"></ion-icon>
+    </button>
+    <button ion-button icon-center style="width:45%" large color="gplus" (click)="loginWithGoogle()">
+      <ion-icon name="logo-googleplus"></ion-icon>
+    </button>
+    <p>
+      O
+    </p>
+    <p>
+      Registrate con tu email y contraseña
+    </p>
+  </div> -->
+  <div style="margin: 0 auto; text-align: center">
+    <a class="main-text">Registro</a>
+    <a class="green">I</a>
+    <a class="blue">GO</a>
+  </div>
 
-      <!-- Login form -->
+  <div class="form">
+    <ion-item>
+      <ion-icon primary item-left name="person"></ion-icon>
+      <ion-label primary floating>Nombre</ion-label>
+      <ion-input type="text" [(ngModel)]="name"></ion-input>
+    </ion-item>
 
-      <ion-list class="list-form" padding>
+    <ion-item>
+      <ion-icon primary item-left name="mail"></ion-icon>
+      <ion-label primary floating>Email</ion-label>
+      <ion-input type="text" [(ngModel)]="email"></ion-input>
+    </ion-item>
 
-        <ion-item>
-          <ion-input type="text" [(ngModel)]="name" placeholder="Your name"></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-input type="email" [(ngModel)]="email" placeholder="Email"></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-input type="password" [(ngModel)]="password" placeholder="Password"></ion-input>
-        </ion-item>
-
-      </ion-list>
-
-      <div padding>
-        <button ion-button color="secondary" block (click)="signup()">
-          Create account
-        </button>
-      </div>
-
-    </div>
-
-    <div padding=""></div>
-
-    <!-- Other links -->
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <span ion-text color="light">Forgot password?</span>
-        </ion-col>
-        <ion-col>
-          <span ion-text color="light">
-            Have account?
-            <span ion-text color="secondary" (click)="login()">Login</span>
-          </span>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <ion-item>
+      <ion-icon primary item-left name="eye-off"></ion-icon>
+      <ion-label primary floating>Contraseña</ion-label>
+      <ion-input type="password" [(ngModel)]="password"></ion-input>
+    </ion-item>
 
   </div>
+
+
 </ion-content>
+
+<ion-footer no-border>
+  <div padding>
+    <button ion-button color="secondary" outline block (click)="signup()">Registrar</button>
+  </div>
+</ion-footer>

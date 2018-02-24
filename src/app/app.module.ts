@@ -40,6 +40,10 @@ import { SettingPage } from '../pages/setting/setting';
 import { SupportPage } from '../pages/support/support';
 import { WalletPage } from '../pages/wallet/wallet';
 import { UserPage } from "../pages/user/user";
+import { VehiclePage } from '../pages/vehicle/vehicle';
+import { LoginHomePage } from '../pages/login-home/login-home';
+import { Camera } from '@ionic-native/camera';
+import { Crop } from '@ionic-native/crop';
 // end import pages
 
 // AF2 Settings
@@ -66,7 +70,10 @@ export const firebaseConfig = {
     SettingPage,
     SupportPage,
     WalletPage,
-    UserPage
+    UserPage,
+    LoginHomePage,
+    VehiclePage
+    
   ],
   imports: [
     BrowserModule,
@@ -93,6 +100,8 @@ export const firebaseConfig = {
     SupportPage,
     WalletPage,
     UserPage,
+    LoginHomePage,
+    VehiclePage
   ],
   providers: [
     StatusBar,
@@ -106,6 +115,8 @@ export const firebaseConfig = {
     TripService,
     AuthService,
     SettingService,
+    Camera,
+    Crop,
     /* import services */
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

@@ -1,45 +1,48 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, MenuController} from 'ionic-angular';
+import { AuthService } from '../../services/auth-service';
+import { AlertController } from 'ionic-angular/components/alert/alert-controller';
+import { LoadingController } from 'ionic-angular/components/loading/loading-controller';
+import { HomePage } from '../home/home';
 import { RegisterPage } from '../register/register';
-import { HomePage } from '../home/home'
-import { AuthService } from "../../services/auth-service";
 
-/*
- Generated class for the LoginPage page.
-
- See http://ionicframework.com/docs/v2/components/#navigation for more info on
- Ionic pages and navigation.
+/**
+ * Generated class for the LoginPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
  */
+
 @Component({
   selector: 'page-login',
-  templateUrl: 'login.html'
+  templateUrl: 'login.html',
 })
 export class LoginPage {
   email: any;
   password: any;
 
   constructor(public nav: NavController, public authService: AuthService, public alertCtrl: AlertController,
-              public loadingCtrl: LoadingController) {
+    public loadingCtrl: LoadingController, private menuController: MenuController) {
 
   }
 
   // go to signup page
   signup() {
-    this.nav.setRoot(RegisterPage);
+    this.nav.push(RegisterPage);
   }
 
   // go to login page
   login() {
     if (!this.email || !this.password) {
       let alert = this.alertCtrl.create({
-        message: 'Please provide email and password',
-        buttons: ['OK']
+        message: 'Por favor, proporcione un Email y contraseña',
+        buttons: ['De acuerdo']
       });
       return alert.present();
     }
 
     let loading = this.loadingCtrl.create({
-      content: 'Please wait...'
+      content: 'Por favor espere...'
     });
     loading.present();
 
@@ -50,7 +53,7 @@ export class LoginPage {
       loading.dismiss();
       let alert = this.alertCtrl.create({
         message: error.message,
-        buttons: ['OK']
+        buttons: ['De acuerdo']
       });
       alert.present();
     });
@@ -64,7 +67,7 @@ export class LoginPage {
       // in case of login error
       let alert = this.alertCtrl.create({
         message: error.message,
-        buttons: ['OK']
+        buttons: ['De acuerdo']
       });
       alert.present();
     });
@@ -78,9 +81,20 @@ export class LoginPage {
       // in case of login error
       let alert = this.alertCtrl.create({
         message: error.message,
-        buttons: ['OK']
+        buttons: ['De acuerdo']
       });
       alert.present();
     });
   }
+
+  ionViewWillEnter() {
+    this.menuController.enable(false);
+    //this.navCtrl.swipeBackEnabled = false;
+  }
+
+  ionViewWillLeave() {
+    this.menuController.enable(true);
+    //this.navCtrl.swipeBackEnabled = true;
+  }
+
 }

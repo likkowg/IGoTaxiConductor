@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, LoadingController, AlertController } from 'ionic-angular';
-import { LoginPage } from '../login/login';
+import { NavController, LoadingController, AlertController, MenuController } from 'ionic-angular';
 import { HomePage } from "../home/home";
 import { AuthService } from "../../services/auth-service";
+import { IonicPage } from 'ionic-angular/navigation/ionic-page';
 
 /*
  Generated class for the RegisterPage page.
@@ -18,15 +18,17 @@ export class RegisterPage {
   email: any;
   password: any;
   name: any;
+  plastname: any;
+  mlastname: any;
 
   constructor(public nav: NavController, public authService: AuthService, public alertCtrl: AlertController,
-              public loadingCtrl: LoadingController) {
+              public loadingCtrl: LoadingController, private menuController: MenuController) {
   }
 
   signup() {
     if (!this.email || !this.password || !this.name) {
       let alert = this.alertCtrl.create({
-        message: 'Please provide email, name and password',
+        message: 'Por favor proporcione todos los datos solicitados',
         buttons: ['OK']
       });
       return alert.present();
@@ -51,6 +53,44 @@ export class RegisterPage {
   }
 
   login() {
-    this.nav.setRoot(LoginPage);
+    this.nav.pop();
   }
+
+  loginWithFacebook() {
+    this.authService.loginWithFacebook().subscribe(authData => {
+      this.nav.setRoot(HomePage);
+    }, error => {
+      // in case of login error
+      let alert = this.alertCtrl.create({
+        message: error.message,
+        buttons: ['De acuerdo']
+      });
+      alert.present();
+    });
+  }
+
+  // login with google
+  loginWithGoogle() {
+    this.authService.loginWithGoogle().subscribe(authData => {
+      this.nav.setRoot(HomePage);
+    }, error => {
+      // in case of login error
+      let alert = this.alertCtrl.create({
+        message: error.message,
+        buttons: ['De acuerdo']
+      });
+      alert.present();
+    });
+  }
+
+  ionViewWillEnter() {
+    this.menuController.enable(false);
+    //this.navCtrl.swipeBackEnabled = false;
+  }
+
+  ionViewWillLeave() {
+    this.menuController.enable(true);
+    //this.navCtrl.swipeBackEnabled = true;
+  }
+
 }
