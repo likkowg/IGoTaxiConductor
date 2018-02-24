@@ -45,50 +45,41 @@ export class MyApp {
   deb: string;
   pages = [
     {
-      title: "Home",
-      icon: "ios-home-outline",
+      title: 'Home',
+      icon: 'ios-home-outline',
       count: 0,
-      component: "HomePage"
+      component: HomePage
     },
     {
-      title: "Wallet",
-      icon: "ios-albums",
+      title: 'Wallet',
+      icon: 'ios-albums',
       count: 0,
-      component: "WalletPage"
+      component: WalletPage
     },
     {
-      title: "Job history",
-      icon: "md-time",
+      title: 'Job history',
+      icon: 'md-time',
       count: 0,
-      component: "JobHistoryPage"
+      component: JobHistoryPage
     },
     {
-      title: "Setting",
-      icon: "settings",
+      title: 'Setting',
+      icon: 'settings',
       count: 0,
-      component: "SettingPage"
+      component: SettingPage
     },
     {
-      title: "Support",
-      icon: "ios-help-circle-outline",
+      title: 'Support',
+      icon: 'ios-help-circle-outline',
       count: 0,
-      component: "SupportPage"
-    }
+      component: SupportPage
+    },
   ];
 
-  //rootPage:any = 'HomePage';
+  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, placeService: PlaceService,
+              geolocation: Geolocation, driverService: DriverService, afAuth: AngularFireAuth,
+              public authService: AuthService, tripService: TripService) {
 
-  constructor(
-    platform: Platform,
-    statusBar: StatusBar,
-    splashScreen: SplashScreen,
-    placeService: PlaceService,
-    geolocation: Geolocation,
-    driverService: DriverService,
-    afAuth: AngularFireAuth,
-    public authService: AuthService,
-    tripService: TripService
-  ) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -101,24 +92,20 @@ export class MyApp {
           let root: any = HomePage;
 
           // check for uncompleted trip
-          tripService
-            .getTrips()
-            .valueChanges()
-            .take(1)
-            .subscribe(trips => {
-              trips.forEach(trip => {
-                if (trip.status == TRIP_STATUS_WAITING) {
-                  tripService.setCurrentTrip(trip.$key);
-                  root = PickUpPage;
-                } else if (trip.status == TRIP_STATUS_GOING) {
-                  tripService.setCurrentTrip(trip.$key);
-                  root = DropOffPage;
-                }
-              });
-
-              // if all trip are completed, go to home page
-              this.nav.setRoot(root);
+          tripService.getTrips().take(1).subscribe(trips => {
+            trips.forEach(trip => {
+              if (trip.status == TRIP_STATUS_WAITING) {
+                tripService.setCurrentTrip(trip.$key);
+                root = PickUpPage;
+              } else if (trip.status == TRIP_STATUS_GOING) {
+                tripService.setCurrentTrip(trip.$key);
+                root = DropOffPage;
+              }
             });
+
+            // if all trip are completed, go to home page
+            this.nav.setRoot(root);
+          });
         } else {
           this.nav.setRoot(LoginPage);
         }
@@ -132,7 +119,7 @@ export class MyApp {
 
           // get user info from service
           driverService.setUser(this.user);
-          driverService.getDriver().valueChanges().subscribe(snapshot => {
+          driverService.getDriver().subscribe(snapshot => {
             this.driver = snapshot;
           });
         } else {
@@ -141,55 +128,39 @@ export class MyApp {
       });
 
       // get current location
-      geolocation.getCurrentPosition().then(
-        resp => {
-          let latLng = new google.maps.LatLng(
-            resp.coords.latitude,
-            resp.coords.longitude
-          );
-          let geocoder = new google.maps.Geocoder();
+      geolocation.getCurrentPosition().then((resp) => {
+        let latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
+        let geocoder = new google.maps.Geocoder();
 
-          // debug
-          // this.deb = resp.coords.latitude + ',' + resp.coords.longitude;
+        // debug
+        // this.deb = resp.coords.latitude + ',' + resp.coords.longitude;
 
-          // find address from lat lng
-          geocoder.geocode({ latLng: latLng }, (results, status) => {
-            if (status == google.maps.GeocoderStatus.OK) {
-              // save locality
-              let locality = placeService.setLocalityFromGeocoder(results);
-              console.log("locality", locality);
+        // find address from lat lng
+        geocoder.geocode({'latLng': latLng}, (results, status) => {
+          if (status == google.maps.GeocoderStatus.OK) {
+            // save locality
+            let locality = placeService.setLocalityFromGeocoder(results);
+            console.log('locality', locality);
 
-              // start tracking
-              this.positionTracking = setInterval(() => {
-                // check for driver object, if it did not complete profile, stop updating location
-                if (!this.driver || !this.driver.type) {
-                  return;
-                }
+            // start tracking
+            this.positionTracking = setInterval(() => {
+              // check for driver object, if it did not complete profile, stop updating location
+              if (!this.driver || !this.driver.type) {
+                return;
+              }
 
-                geolocation.getCurrentPosition().then(
-                  resp => {
-                    driverService.updatePosition(
-                      this.driver.$key,
-                      this.driver.type,
-                      locality,
-                      resp.coords.latitude,
-                      resp.coords.longitude,
-                      this.driver.rating,
-                      this.driver.name
-                    );
-                  },
-                  err => {
-                    console.log(err);
-                  }
-                );
-              }, POSITION_INTERVAL);
-            }
-          });
-        },
-        err => {
-          console.log(err);
-        }
-      );
+              geolocation.getCurrentPosition().then((resp) => {
+                driverService.updatePosition(this.driver.$key, this.driver.type, locality, resp.coords.latitude,
+                    resp.coords.longitude, this.driver.rating, this.driver.name);
+              }, err => {
+                console.log(err);
+              });
+            }, POSITION_INTERVAL);
+          }
+        });
+      }, err => {
+        console.log(err);
+      });
     });
   }
 
@@ -221,3 +192,4 @@ export class MyApp {
     });
   }
 }
+
